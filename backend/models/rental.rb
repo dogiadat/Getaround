@@ -9,6 +9,10 @@ class Rental < ApplicationModel
     Car.find car_id
   end
 
+  def price_with_no_decrease
+    price = rental_days * car.price_per_day + distance * car.price_per_km
+  end
+
   def price
     total_date_with_decreases = if rental_days > 10
                                   1 + 3 * 0.9 + 6 * 0.7 + (rental_days - 10) * 0.5
@@ -43,6 +47,7 @@ class Rental < ApplicationModel
   end
 
   def options
+    return [] unless Option.all_record
     Option.all_record.select{ |option| option["rental_id"] == id }.map do |option|
       Option.new option
     end

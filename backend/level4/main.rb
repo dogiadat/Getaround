@@ -1,21 +1,24 @@
 require "../setup"
-Dir["./models/*.rb"].each {|file| require file }
 
+begin
+  data_input = DataTranslator.import_from "data/input.json"
 
-data_input = DataTranslator.import_from "data/input.json"
+  Car.all_record = data_input["cars"]
+  Rental.all_record = data_input["rentals"]
 
-Car.all_record = data_input["cars"]
-Rental.all_record = data_input["rentals"]
+  rental_prices = []
+  Rental.all_record.each do |rental|
+    rental = Rental.find(rental["id"])
+    rental_prices.push ({
+      id: rental.id,
+      actions: rental.actions
+    })
+  end
 
-rental_prices = []
-Rental.all_record.each do |rental|
-  rental = Rental.find(rental["id"])
-  rental_prices.push ({
-    id: rental.id,
-    actions: rental.actions
-  })
+  data_output = { rentals: rental_prices }
+
+  Dir.mkdir("result") unless Dir.exist?("result")
+  DataTranslator.export_to"result/expected_ouput.json", data_output
+rescue Exception => e
+  puts e.message
 end
-
-data_output = { rentals: rental_prices }
-
-DataTranslator.export_to"test/expected_output.json", data_output
