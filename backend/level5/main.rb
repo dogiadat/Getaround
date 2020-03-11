@@ -20,7 +20,7 @@ begin
   data_output = { rentals: rental_prices }
 
   Dir.mkdir("result") unless Dir.exist?("result")
-  DataTranslator.export_to"result/expected_ouput.json", data_output
+  DataTranslator.export_to"result/expected_output.json", data_output
 rescue Exception => e
   puts e.message
 end
